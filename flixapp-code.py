@@ -70,12 +70,12 @@ st.dataframe(top_movies, hide_index=True)
 
 # item based
 
-st.header("Select any Random Movie", divider='rainbow')
+st.header("Select Your Choice Of Movie", divider='rainbow')
 
 #list of random movies
 random_movies = random.sample(list(movies_df['title']), 5)
 
-selected_movie = st.selectbox("Select a Movie", random_movies)
+selected_movie = st.selectbox("Please make a choise", random_movies)
 
 # Get the movieId of the selected movie
 selected_movie_id = movies_df[movies_df['title'] == selected_movie]['movieId'].values[0]
