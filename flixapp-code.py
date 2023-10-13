@@ -8,6 +8,7 @@ import random
 
 # movie data
 top_movies = pd.read_csv('top_movies.csv')
+movie_item = pd.read_csv('movie_item.csv')
 movies_df = pd.read_csv('data/movies.csv')
 ratings_df = pd.read_csv('data/ratings.csv')
 
@@ -113,19 +114,30 @@ st.header("Select Your Choice Of Movie", divider='rainbow')
 
 # Define a function to generate random movies
 def generate_random_movies():
-    random_movies = random.sample(list(top_movies['title']), 5)
+    random_movies = random.sample(list(movie_item['title']), 5)
     st.session_state.random_movies = random_movies
 
+    
+# Initialize the button label
+if 'button_label' not in st.session_state:
+    st.session_state.button_label = "Get Movies"
+    
 # Create or initialize session state
 if 'random_movies' not in st.session_state:
     st.session_state.random_movies = []
 
-if st.button("Get Another Movies"):
-    generate_random_movies()    
-
+# Display the button with the appropriate label
+if st.button(st.session_state.button_label):
+    if st.session_state.button_label == "Get Movies":
+        st.session_state.button_label = "Get Another Movies"
+    generate_random_movies()
+    
+    
+    
+    
 # Display the random movies
 if st.session_state.random_movies:
-#    st.subheader("Random Movies:")
+    st.divider()
     for movie in st.session_state.random_movies:
         if st.button(f"{movie}"):
             # Retrieve the movie_id for the selected movie
@@ -142,4 +154,4 @@ if st.session_state.random_movies:
                 st.dataframe(recommendations, hide_index=True)
 
 else:
-    st.warning("Click the 'Get Another Movies' button to generate random movies.")
+    st.write("Please click on <span style='color:red; font-weight:bold'>'Get Movies'</span> for serving you choices", unsafe_allow_html=True)
