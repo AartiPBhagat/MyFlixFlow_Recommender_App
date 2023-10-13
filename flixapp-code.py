@@ -105,59 +105,41 @@ st.header("Most Popular Movies.", divider='rainbow')
 #n = st.number_input("How many movies?", value=None, placeholder="Top n movies...")
 
 # display top 10 movies
-top_movies = top_n_pop_based(10)
-st.dataframe(top_movies, hide_index=True)
+top_10_movies = top_n_pop_based(10)
+st.dataframe(top_10_movies, hide_index=True)
 
 #----------------------------Similar Movies------------------------------------
 st.header("Select Your Choice Of Movie", divider='rainbow')
 
-# remove cache-----------------------------------------------------------------
-#@st.cache_data
-#def my_random(movies_df,n=5,state=142):
-    #list of random movies
-#    random_movies = random.sample(list(movies_df['title']), 5)
-#    return random_movies
+# Define a function to generate random movies
+def generate_random_movies():
+    random_movies = random.sample(list(top_movies['title']), 5)
+    st.session_state.random_movies = random_movies
 
-#selected_movie = st.selectbox("Please make a choise", my_random(movies_df))
+# Create or initialize session state
+if 'random_movies' not in st.session_state:
+    st.session_state.random_movies = []
 
-# Get the movieId of the selected movie
-#selected_movie_id = movies_df[movies_df['title'] == selected_movie]['movieId'].values[0]
-#st.write(selected_movie_id)
+if st.button("Get Another Movies"):
+    generate_random_movies()    
 
-#st.write("Because you selcted this movie you may also like these movies...")
+# Display the random movies
+if st.session_state.random_movies:
+#    st.subheader("Random Movies:")
+    for movie in st.session_state.random_movies:
+        if st.button(f"{movie}"):
+            # Retrieve the movie_id for the selected movie
+            selected_movie_id = movies_df.loc[movies_df['title'] == movie, 'movieId'].values[0]
 
-#recommendations = top_n_item_based(selected_movie_id, n=10)
+            # Add your recommendation code here
+            recommendations = top_n_item_based(selected_movie_id, n=10)
+            
 
-#st.dataframe(recommendations)
-#-------------------------------------------------------------------------------
+            if recommendations.empty:
+                st.write("Oops! It looks like there aren't any highly recommended movies available for your selection at the moment. Feel free to explore more options or check back later for fresh recommendations!")
+            else:
+                st.write(f"Great choice!  <span style='color:red; font-weight:bold'>{movie}</span> And... here are some handpicked gems you might enjoy...", unsafe_allow_html=True)
+                st.dataframe(recommendations, hide_index=True)
 
-
-# Define the 'my_random' function
-@st.cache_data
-def my_random(movies_df, n=5, state=142):
-    random_movies = random.sample(list(movies_df['title']), n)
-    return random_movies
-
-
-if not st.button("Get Another Movie"):
-    # Get the initial random movie
-    random_movies = my_random(movies_df)
-    selected_movie = st.selectbox("Please make a choice", random_movies)
-else:   
-    random_movies = my_random(movies_df,state=random.randint(1, 142))
-    selected_movie = st.selectbox("Please make a choice", random_movies)
-
-# Get the movieId of the selected movie
-selected_movie_id = movies_df[movies_df['title'] == selected_movie]['movieId'].values[0]
-#st.write(selected_movie_id, selected_movie)
-
-recommendations = top_n_item_based(selected_movie_id, n=10)
-
-if recommendations.empty:
-    st.write("Oops! It looks like there aren't any highly recommended movies available for your selection at the moment. Feel free to explore more options or check back later for fresh recommendations!")
 else:
-    st.write(f"Great choice!  <span style='color:red; font-weight:bold'>{selected_movie}</span> And... here are some handpicked gems you might enjoy...", unsafe_allow_html=True)
-    st.dataframe(recommendations,hide_index=True)
-    
-#------------------------------------------------------------------------------
-#-----------------------------------------------------------------------------
+    st.warning("Click the 'Get Another Movies' button to generate random movies.")
