@@ -39,7 +39,7 @@ movie_cosines_matrix = pd.DataFrame(cosine_similarity(user_movie_matrix.T),
 def top_n_item_based(movieId, n):
     # Create a DataFrame using the values from 'movies_cosines_matrix' for the 'movieId'
     cosines_df = pd.DataFrame(movie_cosines_matrix[movieId])
-    print(cosines_df)
+
 
     # Remove the row with the index given movieId
     cosines_df = cosines_df[cosines_df.index != movieId]
